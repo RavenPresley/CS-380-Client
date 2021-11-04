@@ -10,7 +10,7 @@ public:
 	void SendCommand();
 
 };
-
+// Hi Jon
 GUIManager::GUIManager()
 {
 
