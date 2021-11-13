@@ -1,3 +1,8 @@
+//Client & Socket Functionality
+//Copied from: https://docs.microsoft.com/en-us/windows/win32/winsock/complete-client-code
+//Learn how to Run: https://docs.microsoft.com/en-us/windows/win32/winsock/finished-server-and-client-code
+//Will be altered and adapted to our uses, for now is just here to learn from and understand over time how it works.
+
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
