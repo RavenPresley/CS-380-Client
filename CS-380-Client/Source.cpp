@@ -10,7 +10,8 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <iostream>
+using namespace std;
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -100,18 +101,29 @@ int __cdecl main(int argc, char** argv)
 
 	printf("Bytes Sent: %ld\n", iResult);
 
-	// shutdown the connection since no more data will be sent
-	iResult = shutdown(ConnectSocket, SD_SEND);
-	if (iResult == SOCKET_ERROR) {
-		printf("shutdown failed with error: %d\n", WSAGetLastError());
-		closesocket(ConnectSocket);
-		WSACleanup();
-		return 1;
-	}
+	//Wait for return ESTABLISH message from server
+	cout << "Waiting for ESTABLISH Return" << endl;
+	iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+	if (iResult > 0)
+		printf("Bytes received: %d\n", iResult);
+	else if (iResult == 0)
+		printf("Connection closed\n");
+	else
+		printf("recv failed with error: %d\n", WSAGetLastError());
 
 	// Receive until the peer closes the connection
 	do {
+		cout << "Sending command" << endl;
+		sendbuf = "CSV";
+		iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+		if (iResult == SOCKET_ERROR) {
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(ConnectSocket);
+			WSACleanup();
+			return 1;
+		}
 
+		cout << "Waiting for reply" << endl;
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 			printf("Bytes received: %d\n", iResult);
@@ -121,6 +133,15 @@ int __cdecl main(int argc, char** argv)
 			printf("recv failed with error: %d\n", WSAGetLastError());
 
 	} while (iResult > 0);
+
+	// shutdown the connection since no more data will be sent
+	iResult = shutdown(ConnectSocket, SD_SEND);
+	if (iResult == SOCKET_ERROR) {
+		printf("shutdown failed with error: %d\n", WSAGetLastError());
+		closesocket(ConnectSocket);
+		WSACleanup();
+		return 1;
+	}
 
 	// cleanup
 	closesocket(ConnectSocket);
