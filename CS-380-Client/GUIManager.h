@@ -42,9 +42,11 @@ class GUIManager
 public:
 	void ShowLoginMenu();
 	void ShowMainMenu();
-	void SendCommand();
+	void SendCommand(std:: string commandAndData);
 	void DisplayData();
 	void AddMachine();
+	void NewIOMachine();
+	void NewOUMachine();
 	void DeleteMachine();
 	void EditMachine();
 	void SearchMachine();
@@ -63,6 +65,8 @@ void GUIManager::ShowLoginMenu()
 	std::cout << "\nEnter Password:";
 	std::cin >> pass;
 
+
+	SendCommand("L;" + user + "," + pass);
 	/*need to pass username, password, and login command to server.
 	* if server returns successful login, display main menu
 	* if server returns unsuccessful login, display try again and reattempt login */
@@ -74,7 +78,7 @@ void GUIManager::ShowMainMenu()
 	std::cout << "*************Welcome****************"; //some sort of welcome message
 	
 	std::cout << "\n\n\t\tCommand List:";	//may be better to put this in its own ShowCommandList function
-	std::cout << "[V] View All Machines"
+	std::cout << "[C] View All Machines"
 		<< "\n[S] Search for Machine"
 		<< "\n[E] Edit a Machine"
 		<< "\n[A] Add a Machine"
@@ -88,7 +92,7 @@ void GUIManager::ShowMainMenu()
 	//switch statement to decide what command to execute
 	switch (userCommand)
 	{
-	case'V':
+	case 'C':
 		DisplayData();
 		break;
 	case 'S':
@@ -116,9 +120,22 @@ void GUIManager::DisplayData() //retrieves csv file from server, displays data t
 
 }
 
-void GUIManager::SearchMachine() //prompts user for assetTag, searches csv file
+void GUIManager::SearchMachine() //prompts user for assetTag, searches csv file, more of a search and display
 {
+	std::string input;
 
+	std::cout << "Enter AssetTag: ";
+
+	std::cin >> input;
+	SendCommand("S;" + input);//sends concatenated string of command and assetTag
+
+	//get machine info back from server
+	if (true) //if machine found??
+	{
+		//display machine string
+	}
+	else //if server returns NULL??
+		std::cout<<"AssetTag Not Found." //prompt user for to enter another or return to menu
 }
 
 void GUIManager::EditMachine()
@@ -127,10 +144,45 @@ void GUIManager::EditMachine()
 	//proper string format of machine displayed so user can copy it
 	//prompts user to enter proper string format of edited machine
 	//sends edited machine data to server to be updated
+	std::string searchTag;
+	std::string input;
+
+	//search for machine to edit
+	//display machine to be edited
+	//send edited machine to server
+	SendCommand("E;" + input);
 }
 void GUIManager::AddMachine() //prompts user to enter machine information in csv string format, sends to server
 {
-	
+	std::string m;
+	char useStatus;
+
+	std::cout << "Is New Machine In Use or Out Of Use?"
+		<< "\n[I] In Use"
+		<< "\n[O] Out Of Use"
+		<< "\n\n Enter I or O:";
+
+	std::cin >> useStatus;
+
+	switch(useStatus)
+	{
+	case 'I':
+		NewIOMachine();
+	case 'O':
+		NewOUMachine();
+	default:
+		"Invalid Command. Please Try Again." //reloop
+	}
+}
+
+void GUIManager::NewIOMachine()
+{
+
+}
+
+void GUIManager::NewOUMachine()
+{
+
 }
 
 void GUIManager::DeleteMachine()
@@ -144,6 +196,12 @@ void GUIManager::DeleteMachine()
 
 void GUIManager::EditLogins() 
 {
+	
 	//prompts user for change in username and password
 	//passes these to the server to be updated
+}
+
+void GUIManager::SendCommand(std::string comData)
+{
+	//send command to server somehow
 }
