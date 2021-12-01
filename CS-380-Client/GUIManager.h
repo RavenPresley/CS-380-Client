@@ -12,6 +12,7 @@ public:
 
 };
 // Hi Jon
+// Hello :)
 GUIManager::GUIManager()
 {
 
@@ -111,7 +112,7 @@ void GUIManager::ToSource() //THIS WILL OBVIOUSLY NOT GO HERE LATER, WILL BE IN 
 
 std::string GUIManager::DisplayLoginScreen()
 {	
-	system("CLS"); //clear screen
+	//system("CLS"); //clear screen
 
 	std::string user = "";
 	std::string pass = "";

@@ -11,6 +11,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <string.h>
+#include <string>
+#include "GUIManager.h"
+#include "LocalDataManager.h"
 using namespace std;
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
@@ -29,7 +33,7 @@ int __cdecl main(int argc, char** argv)
 	struct addrinfo* result = NULL,
 		* ptr = NULL,
 		hints;
-	const char* sendbuf = "ESTABLISH";
+	char sendbuf[DEFAULT_BUFLEN] = "ESTABLISH";
 	char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
 	int recvbuflen = DEFAULT_BUFLEN;
@@ -85,7 +89,7 @@ int __cdecl main(int argc, char** argv)
 	freeaddrinfo(result);
 
 	if (ConnectSocket == INVALID_SOCKET) {
-		printf("Unable to connect to server!\n");
+		printf("Unable to connect to server %d\n", WSAGetLastError());
 		WSACleanup();
 		return 1;
 	}
@@ -111,10 +115,69 @@ int __cdecl main(int argc, char** argv)
 	else
 		printf("recv failed with error: %d\n", WSAGetLastError());
 
+
+	//Connection Established
+	//Beginning Actual Program
+
+	//Login
+	GUIManager GUI;
+	string LoginResult;
+	bool LoginSuccess = false;
+	while (!LoginSuccess)
+	{
+		LoginResult = "";
+		string login = GUI.DisplayLoginScreen();
+		cout << "Sending login" << endl;
+		strcpy_s(sendbuf, login.c_str());
+		iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+		if (iResult == SOCKET_ERROR) {
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(ConnectSocket);
+			WSACleanup();
+			return 1;
+		}
+
+		cout << "Verifying Login..." << endl;
+
+		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+		if (iResult > 0)
+			printf("Bytes received: %d\n", iResult);
+		else if (iResult == 0)
+			printf("Connection closed\n");
+		else
+			printf("recv failed with error: %d\n", WSAGetLastError());
+
+		cout << "iResult: " << iResult << endl;
+		/*
+		for (int i = 0; i < iResult; i++)
+		{
+			//cout << "Valid char: " << isalnum(recvbuf[i]) << endl;
+			LoginResult += recvbuf[i];
+		}
+		*/
+		int i = 0;
+		while (isalnum(recvbuf[i]))
+		{
+			LoginResult += recvbuf[i];
+			i++;
+		}
+		
+		cout << "LoginResult: " << LoginResult << endl;
+
+		if (LoginResult == "GRANTED")
+		{
+			LoginSuccess = true;
+		}
+		else if (LoginResult == "DENIED")
+		{
+			cout << "Login Failed";
+		}
+	}
+	
+
 	// Receive until the peer closes the connection
 	do {
 		cout << "Sending command" << endl;
-		sendbuf = "CSV";
 		iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
 		if (iResult == SOCKET_ERROR) {
 			printf("send failed with error: %d\n", WSAGetLastError());
