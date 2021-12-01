@@ -47,17 +47,10 @@ public:
 	/*void GetData();
 	void DisplayData();
 	*/
-	
-
 	std::string AddMachine();
-	std::string NewIOMachine();
-	std::string NewOUMachine();
 	std::string DeleteMachine();
 	std::string EditMachine();
 	std::string SearchMachine();
-	std::string EditLogin();
-
-	void ToSource(); //stores code to be sent to source later
 };
 
 /*
@@ -144,8 +137,7 @@ char GUIManager::DisplayCommandScreen() //asks for command from user, returns co
 		<< "\n[E] Edit a Machine"
 		<< "\n[A] Add a Machine"
 		<< "\n[D] Delete a Machine"
-		<< "\n[U] Edit User Logins"
-		<< "\n[E] Exit\n";
+		<< "\n[Q] Quit\n";
 
 	std::cout << "Enter a Command Character: ";
 	std::cin >> userCommand;
@@ -307,7 +299,7 @@ std::string GUIManager::DeleteMachine()
 		return ("D;" + input);
 	}
 	else
-		return NULL; //returns NULL string, source will not send anything to server and will reload main menu
+		return '\0'; //returns NULL string, source will not send anything to server and will reload main menu
 }
 
 

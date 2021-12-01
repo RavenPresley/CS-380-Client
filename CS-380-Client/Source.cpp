@@ -176,13 +176,38 @@ int __cdecl main(int argc, char** argv)
 	
 	//Login worked, begin main loop
 	// Receive until the peer closes the connection
-	char command;
+	char command = '\0';
+	string message;
 	do {
 		//Empty command character, ping user for new command
+		if (command == 'Q')
+		{
+			break;
+		}
 		command = '\0';
 		command = GUI.DisplayCommandScreen();
 
-
+		//Switch statement to get info for command from user
+		switch (command)
+		{
+		case 'S':
+			message = GUI.SearchMachine();
+			break;
+		case 'E':
+			message = GUI.EditMachine();
+			break;
+		case 'A':
+			message = GUI.AddMachine();
+			break;
+		case 'D':
+			message = GUI.DeleteMachine();
+			break;
+		case 'Q':
+			message = "DISCONNECT";
+			break;
+		default:
+			return 0;
+		}
 
 		//Clear the sendbuffer
 		for (int i = 0; i < DEFAULT_BUFLEN; i++)
@@ -190,7 +215,8 @@ int __cdecl main(int argc, char** argv)
 			sendbuf[i] = '\0';
 		}
 
-		//Insert the command into the buffer
+		//Insert the message into the buffer
+		strcpy_s(sendbuf, message.c_str());
 
 		//Send the command
 		cout << "Sending command" << endl;
