@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <stdlib.h>
 /*/class GUIManager
 {
 public:
@@ -40,168 +41,272 @@ void GUIManager::SendCommand()
 class GUIManager
 {
 public:
-	void ShowLoginMenu();
-	void ShowMainMenu();
-	void SendCommand(std:: string commandAndData);
+	std::string DisplayLoginScreen();
+	char DisplayCommandScreen();
+	/*void GetData();
 	void DisplayData();
-	void AddMachine();
-	void NewIOMachine();
-	void NewOUMachine();
-	void DeleteMachine();
-	void EditMachine();
-	void SearchMachine();
-	void EditLogins();
+	*/
+	
+
+	std::string AddMachine();
+	std::string NewIOMachine();
+	std::string NewOUMachine();
+	std::string DeleteMachine();
+	std::string EditMachine();
+	std::string SearchMachine();
+	std::string EditLogin();
+
+	void ToSource(); //stores code to be sent to source later
 };
 
-void GUIManager::ShowLoginMenu()
+/*
+void GUIManager::ToSource() //THIS WILL OBVIOUSLY NOT GO HERE LATER, WILL BE IN SOURCE
+{
+	std::string loginCommand = DisplayLoginScreen();
+	
+	std::string serverReturn = ""; //source sends data to server, server returns some sort of string, this string stores it for processing? 
+	/*need to pass username, password, and login command to server.
+	* if server returns "Login Accepted!" display main menu
+	* f server returns "Login Denied!" display login screen again
+	* if server returns "Login Maximum Reached!" display message and terminate program
+
+
+	char userCommand = DisplayCommandScreen(); //gets command from user (A, D, etc or E to exit)
+
+	while (userCommand != 'E') //will keep processing commands until user uses exit command "E"
+	{
+		switch (userCommand)
+		{
+		case 'C':
+			userCommand = DisplayCommandScreen();
+		case 'S':
+			SearchMachine();
+			userCommand = DisplayCommandScreen();
+		case 'E': 
+			EditMachine();
+			userCommand = DisplayCommandScreen();
+		case 'A':
+			AddMachine();
+			userCommand = DisplayCommandScreen();
+		case 'D':
+			DeleteMachine();
+			userCommand = DisplayCommandScreen();
+		case 'U':
+			EditLogin();
+			userCommand = DisplayCommandScreen();
+		default:
+			std::cout << "Invalid Command. Please Try Again."; //reloop
+			userCommand = DisplayCommandScreen();
+		}
+	}
+
+	//exits while loop when user enters 'E'
+	
+	//clear screen
+	std::cout << "Exiting... "; 
+
+	return; //exits program
+}
+*/
+
+std::string GUIManager::DisplayLoginScreen()
 {	
+	system("CLS"); //clear screen
+
 	std::string user = "";
 	std::string pass = "";
 
 	std::cout << "IT Department Machine Registry System v.1.0";
-	std::cout << "\n\n\t\tSign In:";
+	std::cout << "\n\n\t\tPlease Sign In:";
 	std::cout << "\nEnter Username: ";
 	std::cin >> user;
 	std::cout << "\nEnter Password:";
 	std::cin >> pass;
 
-
-	SendCommand("L;" + user + "," + pass);
+	return ("L;"+ user + "," + pass);
+	
 	/*need to pass username, password, and login command to server.
 	* if server returns successful login, display main menu
 	* if server returns unsuccessful login, display try again and reattempt login */
 }
 
-void GUIManager::ShowMainMenu()
+char GUIManager::DisplayCommandScreen() //asks for command from user, returns command string
 {	
-	char userCommand;
-	std::cout << "*************Welcome****************"; //some sort of welcome message
+	system("CLS");	//clear screen
+	char userCommand; //stores user command character
 	
-	std::cout << "\n\n\t\tCommand List:";	//may be better to put this in its own ShowCommandList function
+	std::cout << "*************Command Menu****************"; 
+	
+	std::cout << "\n\n\t\tCommand List:";	
 	std::cout << "[C] View All Machines"
 		<< "\n[S] Search for Machine"
 		<< "\n[E] Edit a Machine"
 		<< "\n[A] Add a Machine"
 		<< "\n[D] Delete a Machine"
-		<< "\n[U] Edit User Logins";
+		<< "\n[U] Edit User Logins"
+		<< "\n[E] Exit";
 
-	
 	std::cout << "Enter a Command Character: ";
 	std::cin >> userCommand;
 
-	//switch statement to decide what command to execute
-	switch (userCommand)
-	{
-	case 'C':
-		DisplayData();
-		break;
-	case 'S':
-		SearchMachine();
-		break;
-	case 'E':
-		EditMachine();
-		break;
-	case 'A':
-		AddMachine();
-		break;
-	case 'D':
-		DeleteMachine();
-		break;
-	case 'U':
-		EditLogins();
-		break;
-	default:
-		std::cout << "Invalid Command. Please Try Again.";
-	}
+	return userCommand; //returns control back to source, source will then use switch statement
 }
 
-void GUIManager::DisplayData() //retrieves csv file from server, displays data to console
+
+/*
+void GUIManager::GetData() //retrieves csv file from server
 {
 
 }
-
-void GUIManager::SearchMachine() //prompts user for assetTag, searches csv file, more of a search and display
+void GUIManager::DisplayData() //displays data to console
 {
+
+}
+*/
+
+std::string GUIManager::SearchMachine() //prompts user for assetTag, returns S;input
+{
+	system("CLS"); //clear screen
+
 	std::string input;
 
-	std::cout << "Enter AssetTag: ";
+	std::cout << "Enter AssetTag of Machine: ";
 
 	std::cin >> input;
-	SendCommand("S;" + input);//sends concatenated string of command and assetTag
 
-	//get machine info back from server
-	if (true) //if machine found??
+	return("S;" + input);
+}
+
+std::string GUIManager::EditMachine()
+{
+	system("CLS"); //clear screen
+
+	std::string searchTag; //assetTag of machine to edit
+	std::string input;	//input 
+	std::string mEdited; //edited string to return
+
+	std::cout << "Enter Asset Tag of Machine to Edit";
 	{
-		//display machine string
+		
 	}
-	else //if server returns NULL??
-		std::cout<<"AssetTag Not Found." //prompt user for to enter another or return to menu
+	return("E;" + mEdited);
 }
-
-void GUIManager::EditMachine()
+std::string GUIManager::AddMachine() //prompts user to enter machine information
 {
-	//user enters assettag of machine to be edited
-	//proper string format of machine displayed so user can copy it
-	//prompts user to enter proper string format of edited machine
-	//sends edited machine data to server to be updated
-	std::string searchTag;
-	std::string input;
+	system("CLS"); //clear screen
 
-	//search for machine to edit
-	//display machine to be edited
-	//send edited machine to server
-	SendCommand("E;" + input);
-}
-void GUIManager::AddMachine() //prompts user to enter machine information in csv string format, sends to server
-{
-	std::string m;
-	char useStatus;
+	std::string mData; //stores machine information to be returned
+	std::string input; //stores current user input
+	char useStatus; //used to decide which sections to fill
+	
+	//"AssetTag,ServiceTagNum,MakeAndModel,SerialNumber,IsMac, I:((BuildingName,RoomNumber,
+	//PublicOrPrivate,DepartmentInfo,OwnerInfo,)) O: ((SurplusStatus,ReimageStatus,WorkingStatus,ITLocation)) ,IUorOU"
+	
+	std::cout << "Enter AssetTag: ";
+	std::cin >> input;
+	mData = input;
 
+	std::cout << "Enter Service Tag Number: ";
+	std::cin >> input;
+	mData = mData + "," + input;
+
+	std::cout << "Enter Name of Model: ";
+	std::cin >> input;
+	mData = mData + "," + input;
+
+	std::cout << "Enter Serial Number: ";
+	std::cin >> input;
+	mData = mData + "," + input;
+
+	std::cout << "T or F: Machine is a Mac? ";
+	std::cin >> input;
+	mData = mData + "," + input;
+	
 	std::cout << "Is New Machine In Use or Out Of Use?"
 		<< "\n[I] In Use"
 		<< "\n[O] Out Of Use"
 		<< "\n\n Enter I or O:";
 
 	std::cin >> useStatus;
-
-	switch(useStatus)
+	while (useStatus != 'I' && useStatus != 'i' && useStatus != 'O' && useStatus != 'o') //input validation
 	{
-	case 'I':
-		NewIOMachine();
-	case 'O':
-		NewOUMachine();
-	default:
-		"Invalid Command. Please Try Again." //reloop
+		std::cout << "Invalid Entry. Please Type I or O: ";
+		std::cin >> useStatus;
 	}
+	if (useStatus == 'I') //in use Machine
+	{
+		std::cout << "Enter Name of Building: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Enter Room Number: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Is Machine Public or Private?: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Enter Name of Department: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Enter Name of Owner: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		mData += ",,,,,IU"; //completes IU string
+	}
+	else //out of use Machine
+	{
+		mData += ",,,,,";
+
+		std::cout << "Enter Surplus Status: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Enter Reimage Status: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Enter Working Status: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		std::cout << "Enter IT Location: ";
+		std::cin >> input;
+		mData = mData + "," + input;
+
+		mData += ",OU"; //completes OU string
+	}
+	return ("A;" + mData);
 }
 
-void GUIManager::NewIOMachine()
+std::string GUIManager::DeleteMachine()
 {
+	system("CLS"); //clear screen
 
+	std::string input; //stores assetTag of machine to delete
+	char validate;	//stores y or n
+
+	std::cout << "Enter Asset Tag of Machine to Delete: "; //prompt user for assetTag
+	std::cin >> input;
+
+	std::cout << "Are you sure you want to delete machine with assetTag " << input << " ? (Y or N): "; //confirms deletion
+	std::cin >> validate;
+
+	while (validate != 'y' && validate != 'Y' && validate != 'n' && validate != 'N') //input validation
+	{
+		std::cout << "Invalid Entry. Please Enter Y or N: ";
+		std::cin >> validate;
+	}
+
+	if (validate == 'Y' || validate == 'y') //if user confirms deletion
+	{
+		return ("D;" + input);
+	}
+	else
+		return NULL; //returns NULL string, source will not send anything to server and will reload main menu
 }
 
-void GUIManager::NewOUMachine()
-{
 
-}
-
-void GUIManager::DeleteMachine()
-{
-	//promts user to enter assetTag of machine to be deleted
-	//machine string displayed
-	//ask user if this is the correct machine to be deleted (y or n)
-	//ask user "are you sure you want to delete this machine? this cannot be undone. (y or no)
-	//send command to server to delete machine
-}
-
-void GUIManager::EditLogins() 
-{
-	
-	//prompts user for change in username and password
-	//passes these to the server to be updated
-}
-
-void GUIManager::SendCommand(std::string comData)
-{
-	//send command to server somehow
-}
