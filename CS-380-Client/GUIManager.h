@@ -112,7 +112,7 @@ void GUIManager::ToSource() //THIS WILL OBVIOUSLY NOT GO HERE LATER, WILL BE IN 
 
 std::string GUIManager::DisplayLoginScreen()
 {	
-	//system("CLS"); //clear screen
+	system("CLS"); //clear screen
 
 	std::string user = "";
 	std::string pass = "";
@@ -121,7 +121,7 @@ std::string GUIManager::DisplayLoginScreen()
 	std::cout << "\n\n\t\tPlease Sign In:";
 	std::cout << "\nEnter Username: ";
 	std::cin >> user;
-	std::cout << "\nEnter Password:";
+	std::cout << "\nEnter Password: ";
 	std::cin >> pass;
 
 	return ("L;"+ user + "," + pass);
@@ -145,7 +145,7 @@ char GUIManager::DisplayCommandScreen() //asks for command from user, returns co
 		<< "\n[A] Add a Machine"
 		<< "\n[D] Delete a Machine"
 		<< "\n[U] Edit User Logins"
-		<< "\n[E] Exit";
+		<< "\n[E] Exit\n";
 
 	std::cout << "Enter a Command Character: ";
 	std::cin >> userCommand;

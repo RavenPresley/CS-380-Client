@@ -174,9 +174,25 @@ int __cdecl main(int argc, char** argv)
 		}
 	}
 	
-
+	//Login worked, begin main loop
 	// Receive until the peer closes the connection
+	char command;
 	do {
+		//Empty command character, ping user for new command
+		command = '\0';
+		command = GUI.DisplayCommandScreen();
+
+
+
+		//Clear the sendbuffer
+		for (int i = 0; i < DEFAULT_BUFLEN; i++)
+		{
+			sendbuf[i] = '\0';
+		}
+
+		//Insert the command into the buffer
+
+		//Send the command
 		cout << "Sending command" << endl;
 		iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
 		if (iResult == SOCKET_ERROR) {
@@ -186,6 +202,7 @@ int __cdecl main(int argc, char** argv)
 			return 1;
 		}
 
+		//Get reply back
 		cout << "Waiting for reply" << endl;
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
