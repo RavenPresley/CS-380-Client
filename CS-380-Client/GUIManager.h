@@ -12,7 +12,7 @@ public:
 	*/
 	std::string AddMachine();
 	std::string DeleteMachine();
-	std::string EditMachine();
+	std::string EditMachine(std::string AssetTag);
 	std::string SearchMachine();
 
 };
@@ -47,7 +47,7 @@ char GUIManager::DisplayCommandScreen() //asks for command from user, returns co
 	std::cout << "*************Command Menu****************"; 
 	
 	std::cout << "\n\n\t\tCommand List:";	
-	std::cout << "[C] View All Machines"
+	std::cout
 		<< "\n[S] Search for Machine"
 		<< "\n[E] Edit a Machine"
 		<< "\n[A] Add a Machine"
@@ -86,50 +86,100 @@ std::string GUIManager::SearchMachine() //prompts user for assetTag, returns S;i
 	return("S;" + input);
 }
 
-std::string GUIManager::EditMachine()
+std::string GUIManager::EditMachine(std::string AssetTag)
 {
-	/*
-std::string GUIManager::EditMachine() //need to first search for machine to be edited, need to somehow access string so user doesnt have to reenter data
-{
-	system("CLS"); //clear screen
+	//system("CLS"); //clear screen
 
-	std::string searchTag; //assetTag of machine to edit
-	std::string foundMachine = ""; //machine string found locally
-	std::string input;	//input
-	std::string mEdited; //edited string to return
+	std::string mData; //stores machine information to be returned
+	std::string input; //stores current user input
+	char useStatus; //used to decide which sections to fill
 
-	std::cout << "Enter Asset Tag of Machine to Edit:";
-	std::cin >> searchTag;
+	//"AssetTag,ServiceTagNum,MakeAndModel,SerialNumber,IsMac, I:((BuildingName,RoomNumber,
+	//PublicOrPrivate,DepartmentInfo,OwnerInfo,)) O: ((SurplusStatus,ReimageStatus,WorkingStatus,ITLocation)) ,IUorOU"
 
-	foundMachine = LocalSearch(searchTag);
+	
+	mData += AssetTag;
 
-	while (foundMachine == "");
+	std::cout << "Enter Service Tag Number: ";
+	std::getline(std::cin, input);
+	mData = mData + "," + input;
+
+	std::cout << "Enter Name of Model: ";
+	std::getline(std::cin, input);
+	mData = mData + "," + input;
+
+	std::cout << "Enter Serial Number: ";
+	std::getline(std::cin, input);
+	mData = mData + "," + input;
+
+	std::cout << "T or F: Machine is a Mac? ";
+	std::getline(std::cin, input);
+	mData = mData + "," + input;
+
+	std::cout << "Is New Machine In Use or Out Of Use?"
+		<< "\n[I] In Use"
+		<< "\n[O] Out Of Use"
+		<< "\n\n Enter I or O:";
+
+	std::cin.get(useStatus);
+	std::cin.ignore();
+	while (useStatus != 'I' && useStatus != 'i' && useStatus != 'O' && useStatus != 'o') //input validation
 	{
-		std::cout << "AssetTag not found. Please reenter assetTag: ";
-		std::cin >> searchTag;
+		std::cout << "Invalid Entry. Please Type I or O: ";
+		std::cin.get(useStatus);
+		std::cin.ignore();
+	}
+	std::cin.ignore();
+	if (useStatus == 'I') //in use Machine
+	{
+		std::cout << "Enter Name of Building: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
 
-		foundMachine = LocalSearch(searchTag);
+		std::cout << "Enter Room Number: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		std::cout << "Is Machine Public or Private?: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		std::cout << "Enter Name of Department: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		std::cout << "Enter Name of Owner: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		mData += ",,,,,IU"; //completes IU string
+	}
+	else //out of use Machine
+	{
+		mData += ",,,,,";
+
+		std::cout << "Enter Surplus Status: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		std::cout << "Enter Reimage Status: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		std::cout << "Enter Working Status: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		std::cout << "Enter IT Location: ";
+		std::getline(std::cin, input);
+		mData = mData + "," + input;
+
+		mData += ",OU"; //completes OU string
 	}
 
-	std::cout << "Machine found. Current Machine information:\n" << foundMachine; //shows machine information for users reference
-	std::cout << "Please enter edited machine information in one of the following formats:";
-	std::cout<<"For In-Use Machine: "
-	return("E;" + mEdited);
+	return "E;" + mData;
 }
-*/
 
-	system("CLS"); //clear screen
-
-	std::string searchTag; //assetTag of machine to edit
-	std::string input;	//input 
-	std::string mEdited; //edited string to return
-
-	std::cout << "Enter Asset Tag of Machine to Edit";
-	{
-		
-	}
-	return("E;" + mEdited);
-}
 std::string GUIManager::AddMachine() //prompts user to enter machine information
 {
 	system("CLS"); //clear screen
@@ -166,14 +216,15 @@ std::string GUIManager::AddMachine() //prompts user to enter machine information
 		<< "\n[O] Out Of Use"
 		<< "\n\n Enter I or O:";
 
-	std::cin >> useStatus;
+	std::cin.get(useStatus);
 	std::cin.ignore();
-
 	while (useStatus != 'I' && useStatus != 'i' && useStatus != 'O' && useStatus != 'o') //input validation
 	{
 		std::cout << "Invalid Entry. Please Type I or O: ";
-		std::cin >> useStatus;
+		std::cin.get(useStatus);
+		std::cin.ignore();
 	}
+	std::cin.ignore();
 	if (useStatus == 'I') //in use Machine
 	{
 		std::cout << "Enter Name of Building: ";

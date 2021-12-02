@@ -173,21 +173,23 @@ int __cdecl main(int argc, char** argv)
 		}
 		else if (LoginResult == "DENIED")
 		{
-			cout << "Login Failed";
+			cout << "Login Failed\n";
+			cout << "Press Enter to retry login...";
+			cin.get();
 		}
-
-		cout << "Press Enter to retry login...";
-		cin.get();
 	}
 	
 	//Login worked, begin main loop
 	// Receive until the peer closes the connection
 	char command = '\0';
 	string message;
+	string res;
+	string temp;
 	do {
 		//Empty command character, ping user for new command
 		command = '\0';
 		message = "";
+		res = "";
 		command = GUI.DisplayCommandScreen();
 
 		if (command == 'Q')
@@ -195,6 +197,7 @@ int __cdecl main(int argc, char** argv)
 			break;
 		}
 
+		int i = 0;
 		//Switch statement to get info for command from user
 		switch (command)
 		{
@@ -202,7 +205,63 @@ int __cdecl main(int argc, char** argv)
 			message = GUI.SearchMachine();
 			break;
 		case 'E':
-			message = GUI.EditMachine();
+			message = GUI.SearchMachine();
+			//Clear the sendbuffer
+			for (int i = 0; i < DEFAULT_BUFLEN; i++)
+			{
+				sendbuf[i] = '\0';
+			}
+
+			//Insert the message into the buffer
+			strcpy_s(sendbuf, message.c_str());
+
+			//Send the command
+			cout << "Sending command" << endl;
+			iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+			if (iResult == SOCKET_ERROR) {
+				printf("send failed with error: %d\n", WSAGetLastError());
+				closesocket(ConnectSocket);
+				WSACleanup();
+				return 1;
+			}
+			for (int i = 0; i < DEFAULT_BUFLEN; i++)
+			{
+				sendbuf[i] = '\0';
+			}
+			//Get reply back
+			cout << "Waiting for reply" << endl;
+			for (int i = 0; i < DEFAULT_BUFLEN; i++)
+			{
+				recvbuf[i] = '\0';
+			}
+			iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+			if (iResult > 0)
+				printf("Bytes received: %d\n", iResult);
+			else if (iResult == 0)
+				printf("Connection closed\n");
+			else
+				printf("recv failed with error: %d\n", WSAGetLastError());
+			cout << "Buffer received: " << recvbuf << endl;
+			
+			while (i < (int)strlen(recvbuf))
+			{
+				res += recvbuf[i];
+				i++;
+			}
+
+			if (res[0] == '-')
+			{
+				cout << "Machine not found. " << endl;
+				cout << "Press Enter to return to Command Screen...\n";
+				cin.get();
+				continue;
+			}
+
+			message.erase(message.begin());
+			message.erase(message.begin());
+
+			temp = message;
+			message = GUI.EditMachine(temp);
 			break;
 		case 'A':
 			message = GUI.AddMachine();
@@ -258,15 +317,15 @@ int __cdecl main(int argc, char** argv)
 		else
 			printf("recv failed with error: %d\n", WSAGetLastError());
 		cout << "Buffer received: " << recvbuf << endl;
-		string result;
-		int i = 0;
+		
+		i = 0;
 		while (i < (int)strlen(sendbuf))
 		{
-			result += recvbuf[i];
+			res += recvbuf[i];
 			i++;
 		}
 
-		cout << result << endl;
+		cout << res << endl;
 		cout << "Press Enter to return to Command Screen...";
 		cin.get();
 	} while (iResult > 0);
