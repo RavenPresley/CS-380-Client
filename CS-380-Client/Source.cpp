@@ -14,7 +14,6 @@
 #include <string.h>
 #include <string>
 #include "GUIManager.h"
-#include "LocalDataManager.h"
 using namespace std;
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
@@ -33,10 +32,12 @@ int __cdecl main(int argc, char** argv)
 	struct addrinfo* result = NULL,
 		* ptr = NULL,
 		hints;
-	char sendbuf[DEFAULT_BUFLEN] = "ESTABLISH";
+	int recvbuflen = DEFAULT_BUFLEN;
+	int sendbuflen = DEFAULT_BUFLEN;
+	char sendbuf[DEFAULT_BUFLEN];
 	char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
-	int recvbuflen = DEFAULT_BUFLEN;
+	
 
 	// Validate the parameters
 	if (argc != 2) {
@@ -94,6 +95,9 @@ int __cdecl main(int argc, char** argv)
 		return 1;
 	}
 
+	string est = "ESTABLISH";
+	strcpy_s(sendbuf, est.c_str());
+
 	// Send an initial buffer
 	iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
 	if (iResult == SOCKET_ERROR) {
@@ -139,6 +143,11 @@ int __cdecl main(int argc, char** argv)
 
 		cout << "Verifying Login..." << endl;
 
+		for (int i = 0; i < DEFAULT_BUFLEN; i++)
+		{
+			recvbuf[i] = '\0';
+		}
+
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 			printf("Bytes received: %d\n", iResult);
@@ -148,15 +157,9 @@ int __cdecl main(int argc, char** argv)
 			printf("recv failed with error: %d\n", WSAGetLastError());
 
 		cout << "iResult: " << iResult << endl;
-		/*
-		for (int i = 0; i < iResult; i++)
-		{
-			//cout << "Valid char: " << isalnum(recvbuf[i]) << endl;
-			LoginResult += recvbuf[i];
-		}
-		*/
+		
 		int i = 0;
-		while (isalnum(recvbuf[i]))
+		while (i < 6)
 		{
 			LoginResult += recvbuf[i];
 			i++;
@@ -164,7 +167,7 @@ int __cdecl main(int argc, char** argv)
 		
 		cout << "LoginResult: " << LoginResult << endl;
 
-		if (LoginResult == "GRANTED")
+		if (LoginResult == "ACCEPT")
 		{
 			LoginSuccess = true;
 		}
@@ -172,6 +175,9 @@ int __cdecl main(int argc, char** argv)
 		{
 			cout << "Login Failed";
 		}
+
+		cout << "Press Enter to retry login...";
+		cin.get();
 	}
 	
 	//Login worked, begin main loop
@@ -181,6 +187,7 @@ int __cdecl main(int argc, char** argv)
 	do {
 		//Empty command character, ping user for new command
 		command = '\0';
+		message = "";
 		command = GUI.DisplayCommandScreen();
 
 		if (command == 'Q')
@@ -233,9 +240,16 @@ int __cdecl main(int argc, char** argv)
 			WSACleanup();
 			return 1;
 		}
-
+		for (int i = 0; i < DEFAULT_BUFLEN; i++)
+		{
+			sendbuf[i] = '\0';
+		}
 		//Get reply back
 		cout << "Waiting for reply" << endl;
+		for (int i = 0; i < DEFAULT_BUFLEN; i++)
+		{
+			recvbuf[i] = '\0';
+		}
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 			printf("Bytes received: %d\n", iResult);
@@ -243,7 +257,18 @@ int __cdecl main(int argc, char** argv)
 			printf("Connection closed\n");
 		else
 			printf("recv failed with error: %d\n", WSAGetLastError());
+		cout << "Buffer received: " << recvbuf << endl;
+		string result;
+		int i = 0;
+		while (i < (int)strlen(sendbuf))
+		{
+			result += recvbuf[i];
+			i++;
+		}
 
+		cout << result << endl;
+		cout << "Press Enter to return to Command Screen...";
+		cin.get();
 	} while (iResult > 0);
 
 	// shutdown the connection since no more data will be sent

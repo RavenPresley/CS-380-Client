@@ -14,6 +14,7 @@ public:
 	std::string DeleteMachine();
 	std::string EditMachine();
 	std::string SearchMachine();
+
 };
 
 
@@ -54,8 +55,9 @@ char GUIManager::DisplayCommandScreen() //asks for command from user, returns co
 		<< "\n[Q] Quit\n";
 
 	std::cout << "Enter a Command Character: ";
-	std::cin >> userCommand;
-
+	//std::cin >> userCommand;
+	std::cin.get(userCommand);
+	std::cin.ignore();
 	return userCommand; //returns control back to source, source will then use switch statement
 }
 
@@ -165,6 +167,8 @@ std::string GUIManager::AddMachine() //prompts user to enter machine information
 		<< "\n\n Enter I or O:";
 
 	std::cin >> useStatus;
+	std::cin.ignore();
+
 	while (useStatus != 'I' && useStatus != 'i' && useStatus != 'O' && useStatus != 'o') //input validation
 	{
 		std::cout << "Invalid Entry. Please Type I or O: ";
@@ -231,6 +235,7 @@ std::string GUIManager::DeleteMachine()
 
 	std::cout << "Are you sure you want to delete machine with assetTag " << input << " ? (Y or N): "; //confirms deletion
 	std::cin >> validate;
+	
 
 	while (validate != 'y' && validate != 'Y' && validate != 'n' && validate != 'N') //input validation
 	{
@@ -240,6 +245,7 @@ std::string GUIManager::DeleteMachine()
 
 	if (validate == 'Y' || validate == 'y') //if user confirms deletion
 	{
+		std::cin.ignore();
 		return ("D;" + input);
 	}
 	else
