@@ -1,43 +1,6 @@
 #pragma once
 #include <iostream>
 #include <stdlib.h>
-/*/class GUIManager
-{
-public:
-	GUIManager();
-	void CreateGUI();
-	void DisplayData();
-	void DisplayLogin();
-	void SendCommand();
-
-};
-// Hi Jon
-// Hello :)
-GUIManager::GUIManager()
-{
-
-}
-
-void GUIManager::CreateGUI()
-{
-
-}
-
-void GUIManager::DisplayData()
-{
-
-}
-
-void GUIManager::DisplayLogin()
-{
-
-}
-
-void GUIManager::SendCommand()
-{
-
-}
-*/
 
 class GUIManager
 {
@@ -53,55 +16,6 @@ public:
 	std::string SearchMachine();
 };
 
-/*
-void GUIManager::ToSource() //THIS WILL OBVIOUSLY NOT GO HERE LATER, WILL BE IN SOURCE
-{
-	std::string loginCommand = DisplayLoginScreen();
-	
-	std::string serverReturn = ""; //source sends data to server, server returns some sort of string, this string stores it for processing? 
-	/*need to pass username, password, and login command to server.
-	* if server returns "Login Accepted!" display main menu
-	* f server returns "Login Denied!" display login screen again
-	* if server returns "Login Maximum Reached!" display message and terminate program
-
-
-	char userCommand = DisplayCommandScreen(); //gets command from user (A, D, etc or E to exit)
-
-	while (userCommand != 'E') //will keep processing commands until user uses exit command "E"
-	{
-		switch (userCommand)
-		{
-		case 'C':
-			userCommand = DisplayCommandScreen();
-		case 'S':
-			SearchMachine();
-			userCommand = DisplayCommandScreen();
-		case 'E': 
-			EditMachine();
-			userCommand = DisplayCommandScreen();
-		case 'A':
-			AddMachine();
-			userCommand = DisplayCommandScreen();
-		case 'D':
-			DeleteMachine();
-			userCommand = DisplayCommandScreen();
-		case 'U':
-			EditLogin();
-			userCommand = DisplayCommandScreen();
-		default:
-			std::cout << "Invalid Command. Please Try Again."; //reloop
-			userCommand = DisplayCommandScreen();
-		}
-	}
-
-	//exits while loop when user enters 'E'
-	
-	//clear screen
-	std::cout << "Exiting... "; 
-
-	return; //exits program
-}
-*/
 
 std::string GUIManager::DisplayLoginScreen()
 {	
@@ -113,9 +27,9 @@ std::string GUIManager::DisplayLoginScreen()
 	std::cout << "IT Department Machine Registry System v.1.0";
 	std::cout << "\n\n\t\tPlease Sign In:";
 	std::cout << "\nEnter Username: ";
-	std::cin >> user;
+	std::getline(std::cin, user);
 	std::cout << "\nEnter Password: ";
-	std::cin >> pass;
+	std::getline(std::cin, pass);
 
 	return ("L;"+ user + "," + pass);
 	
@@ -165,13 +79,43 @@ std::string GUIManager::SearchMachine() //prompts user for assetTag, returns S;i
 
 	std::cout << "Enter AssetTag of Machine: ";
 
-	std::cin >> input;
+	std::getline(std::cin, input);
 
 	return("S;" + input);
 }
 
 std::string GUIManager::EditMachine()
 {
+	/*
+std::string GUIManager::EditMachine() //need to first search for machine to be edited, need to somehow access string so user doesnt have to reenter data
+{
+	system("CLS"); //clear screen
+
+	std::string searchTag; //assetTag of machine to edit
+	std::string foundMachine = ""; //machine string found locally
+	std::string input;	//input
+	std::string mEdited; //edited string to return
+
+	std::cout << "Enter Asset Tag of Machine to Edit:";
+	std::cin >> searchTag;
+
+	foundMachine = LocalSearch(searchTag);
+
+	while (foundMachine == "");
+	{
+		std::cout << "AssetTag not found. Please reenter assetTag: ";
+		std::cin >> searchTag;
+
+		foundMachine = LocalSearch(searchTag);
+	}
+
+	std::cout << "Machine found. Current Machine information:\n" << foundMachine; //shows machine information for users reference
+	std::cout << "Please enter edited machine information in one of the following formats:";
+	std::cout<<"For In-Use Machine: "
+	return("E;" + mEdited);
+}
+*/
+
 	system("CLS"); //clear screen
 
 	std::string searchTag; //assetTag of machine to edit
@@ -196,23 +140,23 @@ std::string GUIManager::AddMachine() //prompts user to enter machine information
 	//PublicOrPrivate,DepartmentInfo,OwnerInfo,)) O: ((SurplusStatus,ReimageStatus,WorkingStatus,ITLocation)) ,IUorOU"
 	
 	std::cout << "Enter AssetTag: ";
-	std::cin >> input;
+	std::getline(std::cin, input);
 	mData = input;
 
 	std::cout << "Enter Service Tag Number: ";
-	std::cin >> input;
+	std::getline(std::cin, input);
 	mData = mData + "," + input;
 
 	std::cout << "Enter Name of Model: ";
-	std::cin >> input;
+	std::getline(std::cin, input);
 	mData = mData + "," + input;
 
 	std::cout << "Enter Serial Number: ";
-	std::cin >> input;
+	std::getline(std::cin, input);
 	mData = mData + "," + input;
 
 	std::cout << "T or F: Machine is a Mac? ";
-	std::cin >> input;
+	std::getline(std::cin, input);
 	mData = mData + "," + input;
 	
 	std::cout << "Is New Machine In Use or Out Of Use?"
@@ -229,23 +173,23 @@ std::string GUIManager::AddMachine() //prompts user to enter machine information
 	if (useStatus == 'I') //in use Machine
 	{
 		std::cout << "Enter Name of Building: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Enter Room Number: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Is Machine Public or Private?: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Enter Name of Department: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Enter Name of Owner: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		mData += ",,,,,IU"; //completes IU string
@@ -255,19 +199,19 @@ std::string GUIManager::AddMachine() //prompts user to enter machine information
 		mData += ",,,,,";
 
 		std::cout << "Enter Surplus Status: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Enter Reimage Status: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Enter Working Status: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		std::cout << "Enter IT Location: ";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		mData = mData + "," + input;
 
 		mData += ",OU"; //completes OU string
@@ -283,7 +227,7 @@ std::string GUIManager::DeleteMachine()
 	char validate;	//stores y or n
 
 	std::cout << "Enter Asset Tag of Machine to Delete: "; //prompt user for assetTag
-	std::cin >> input;
+	std::getline(std::cin, input);
 
 	std::cout << "Are you sure you want to delete machine with assetTag " << input << " ? (Y or N): "; //confirms deletion
 	std::cin >> validate;
