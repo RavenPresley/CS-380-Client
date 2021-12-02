@@ -180,12 +180,13 @@ int __cdecl main(int argc, char** argv)
 	string message;
 	do {
 		//Empty command character, ping user for new command
+		command = '\0';
+		command = GUI.DisplayCommandScreen();
+
 		if (command == 'Q')
 		{
 			break;
 		}
-		command = '\0';
-		command = GUI.DisplayCommandScreen();
 
 		//Switch statement to get info for command from user
 		switch (command)
@@ -203,10 +204,15 @@ int __cdecl main(int argc, char** argv)
 			message = GUI.DeleteMachine();
 			break;
 		case 'Q':
-			message = "DISCONNECT";
+			message = "QUIT";
 			break;
 		default:
 			return 0;
+		}
+
+		if (message == "NODELETE")
+		{
+			continue;
 		}
 
 		//Clear the sendbuffer

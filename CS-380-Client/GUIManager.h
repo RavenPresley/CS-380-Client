@@ -299,7 +299,7 @@ std::string GUIManager::DeleteMachine()
 		return ("D;" + input);
 	}
 	else
-		return '\0'; //returns NULL string, source will not send anything to server and will reload main menu
+		return "NODELETE"; //returns NULL string, source will not send anything to server and will reload main menu
 }
 
 
